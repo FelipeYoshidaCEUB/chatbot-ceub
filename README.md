@@ -77,12 +77,6 @@ Ambiente de desenvolvimento: Visual Studio Code
 
 API de IA: OpenAI ChatGPT
 
-Hospedagem/Back-end: [Definir - ex: AWS, Heroku, servidor próprio]
-
-Frameworks auxiliares: Flask ou FastAPI (para API), HTML/CSS/JS (para integração)
-
-Ferramentas de versionamento: Git + GitHub
-
 8. Principais Entregas
 Documento de levantamento de requisitos (FAQs)
 
