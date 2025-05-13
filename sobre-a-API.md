@@ -3,7 +3,7 @@
 ***OpenAI ChatGPT***
 
 **Hospedagem/Back-end:**
-Pode ser feita em:
+PODE SER feita em:
 
 - AWS – robusto e escalável (ideal para produção).
 - Heroku – fácil de configurar (ótimo para testes e MVPs).
