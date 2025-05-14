@@ -2,24 +2,6 @@
 
 ***OpenAI ChatGPT***
 
-**Hospedagem/Back-end:**
-PODE SER feita em:
-
-- AWS – robusto e escalável (ideal para produção).
-- Heroku – fácil de configurar (ótimo para testes e MVPs).
-- Servidor próprio (VPS) – mais controle, porém exige manutenção (ex: DigitalOcean).
-  
-**Frameworks auxiliares:**
-*Back-end (API):*
-
-- Flask – simples, ideal para projetos pequenos.
-- FastAPI – moderno, rápido, ideal para APIs mais complexas e assíncronas.
-
-**Front-end (Integração com usuário):**
-
-- HTML / CSS / JavaScript.
-- Ou frameworks modernos como React.js ou Next.js, se quiser algo mais dinâmico.
-
 **Ferramentas de versionamento:**
 
 - Git
