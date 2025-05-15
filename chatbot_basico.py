@@ -1,10 +1,9 @@
 """
-Chatbot minimalista em terminal (RAG) para conversar sobre 1 PDF.
-- Carrega o PDF
-- Cria chunks e embeddings (OpenAI)
-- Armazena no FAISS
-- Loop de perguntas/respostas no terminal
-""" 
+Chatbot RAG com múltiplos PDFs.
+– Responde perguntas com base nos documentos
+– Cita a fonte [Fonte: nome_do_pdf.pdf p.X] apenas se usar
+– Ignora citações quando não for necessário
+"""
 
 # Mais pra frente adicionar o conversation buffer memory
 
