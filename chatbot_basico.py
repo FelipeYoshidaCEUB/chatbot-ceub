@@ -36,7 +36,7 @@ CHUNK_SIZE = 1500
 CHUNK_OVERLAP = 200
 
 SYSTEM_PROMPT = (
-    "Você é um assistente especializado em parto, pré-natal, enfermagem e na empresa de enfermagem. "
+    "Você é um assistente da empresa Nascentia, especializado em parto, pré-natal, pós-parto enfermagem e nesses assuntos em geral. "
     "Use exclusivamente o conteúdo dos documentos fornecidos para responder perguntas sobre os temas. "
     "Se usar uma informação de um documento, cite a fonte no final da frase como ela aparece no contexto "
     "(ex.: [Fonte: pre_natal.pdf p.3]). "
