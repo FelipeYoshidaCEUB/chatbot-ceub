@@ -5,11 +5,14 @@ TERMO DE ABERTURA DO PROJETO (TAP)
 
 Projeto: Desenvolvimento de Chatbot para Atendimento ao Cliente - Nascentia
 
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 1. Justificativa do Projeto
 
 
 A Nascentia, por meio de suas plataformas de educação e mentoria online, tem como missão proporcionar apoio às gestantes e alunos com conteúdos de qualidade. No entanto, o aumento da demanda por suporte tem gerado sobrecarga nos canais tradicionais de atendimento. A criação de um chatbot inteligente visa automatizar o atendimento de dúvidas frequentes, garantindo disponibilidade 24/7, melhorando a experiência do usuário e otimizando recursos humanos.
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 2. Objetivo do Projeto
 
@@ -19,6 +22,8 @@ Desenvolver e implementar um chatbot baseado em inteligência artificial que sej
 https://ead.nascentia.com.br
 
 https://mentoria.nascentia.com.br
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 3. Escopo do Projeto
 
@@ -47,12 +52,16 @@ Atendimento via WhatsApp ou redes sociais (fase posterior)
 
 Traduções para outros idiomas
 
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 4. Público-Alvo
 Clientes da plataforma Nascentia
 
 Gestantes
 
 Alunos dos cursos e mentorias
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 5. Premissas
 A equipe da Nascentia fornecerá as perguntas e respostas mais frequentes.
@@ -63,6 +72,8 @@ O sistema será hospedado em infraestrutura já existente ou definida pela equip
 
 A equipe técnica terá acesso aos sites para realizar as integrações necessárias.
 
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 6. Restrições
 O projeto deverá ser finalizado em até 60 dias.
 
@@ -70,12 +81,16 @@ O chatbot deverá ser responsivo e funcionar tanto em desktop quanto em disposit
 
 Orçamento limitado à equipe interna e tecnologias gratuitas ou de baixo custo.
 
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 7. Tecnologias Utilizadas
 Linguagem de programação: Python
 
 Ambiente de desenvolvimento: Visual Studio Code
 
 API de IA: OpenAI ChatGPT
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 8. Principais Entregas
 Documento de levantamento de requisitos (FAQs)
@@ -88,6 +103,8 @@ Relatório de testes e ajustes
 
 Treinamento para a equipe interna da Nascentia
 
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 9. Riscos Identificados
 Dificuldade na definição precisa das dúvidas mais frequentes
 
@@ -96,6 +113,8 @@ Dependência da API da OpenAI (custos e limites)
 Possíveis dificuldades de integração com a estrutura dos sites atuais
 
 Resistência dos usuários ao atendimento automatizado
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 10. Indicadores de Sucesso
 Redução de pelo menos 40% nos chamados manuais em até 2 meses após o lançamento
