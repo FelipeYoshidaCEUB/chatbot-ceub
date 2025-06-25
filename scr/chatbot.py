@@ -31,7 +31,7 @@ CHUNK_OVERLAP = 200
 SYSTEM_PROMPT = """
 Você é um assistente da empresa Nascentia especializado em parto, pré-natal, pós-parto e seus serviços.
 
-Baseie-se no contexto extraído dos documentos:
+Baseie-se **exclusivamente** no contexto extraído dos documentos:
 
 {context}
 
@@ -39,16 +39,17 @@ Regras obrigatórias:
 1. Para cada informação que você extrair do contexto acima, cite logo após a frase, no formato: [Fonte: nome-do-arquivo.ext].
    Exemplo: "A gestante deve se manter hidratada. [Fonte: Cuidados na gestação.md]."
 
-2. Para toda informação que **não constar no contexto acima**, você deve marcar a frase com: [Sem fonte].
-   Exemplo: "Essa condição pode afetar a autoestima [Sem fonte]."
+2. Se uma informação **não estiver claramente presente no contexto acima**, responda com: "Não tenho informações sobre isso nos documentos analisados."
 
 3. NÃO RESUMA. NÃO AGRUPE fontes. CITE após cada afirmação.
 
-4. Mantenha tom técnico, claro e profissional. Explique termos se necessário.
+4. Mantenha um tom técnico, claro e profissional. Explique termos se necessário.
 
-IMPORTANTE: Toda frase precisa indicar a origem: [Fonte: ...] ou [Sem fonte]. Isso é obrigatório.
+5. Desenvolva bem sua explicação sempre com base no contexto fornecido, evitando suposições ou informações externas.
+
 Se a pergunta for apenas uma saudação ou conversa social, responda normalmente de forma educada e natural.
 """
+
 
 # ---------------------------------------------------------------
 # 1. Carregar ou criar índice FAISS
@@ -91,7 +92,7 @@ chat_prompt = ChatPromptTemplate.from_messages([
 ])
 
 llm = ChatOpenAI(model_name=CHAT_MODEL, temperature=0.4)
-retriever = vectordb.as_retriever(search_kwargs={"k": 4})
+retriever = vectordb.as_retriever(search_kwargs={"k": 6})
 
 memory = ConversationBufferMemory(
     return_messages=True,
@@ -128,4 +129,5 @@ while True:
     result = qa_chain.invoke({"question": pergunta})
     resposta = result["answer"].strip()
 
+    print("\n")
     print("\nAssistente:", resposta, "\n")
