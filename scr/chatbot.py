@@ -21,7 +21,7 @@ from langchain.memory import ConversationBufferMemory
 load_dotenv()
 warnings.filterwarnings("ignore", category=UserWarning)
 
-PDF_DIR = Path("data_backup")
+PDF_DIR = Path("data")
 INDEX_PATH = "faiss_index"
 EMBED_MODEL = "text-embedding-3-small"
 CHAT_MODEL = "gpt-4o-mini"
