@@ -2,7 +2,6 @@
 Chatbot RAG com múltiplos PDFs + Memória nativa LangChain + FAISS persistente.
 – Responde perguntas com base nos documentos
 – Cita [Fonte: nome_do_pdf.pdf p.X] se usar
-– Marca [Sem fonte] se não usar
 """
 
 import os
@@ -39,7 +38,7 @@ Regras obrigatórias:
 1. Para cada informação que você extrair do contexto acima, cite logo após a frase, no formato: [Fonte: nome-do-arquivo.ext].
    Exemplo: "A gestante deve se manter hidratada. [Fonte: Cuidados na gestação.md]."
 
-2. Se uma informação **não estiver claramente presente no contexto acima**, responda com: "Não tenho informações sobre isso nos documentos analisados."
+2. Se uma informação **não estiver claramente presente no contexto acima**, responda com: "Não tenho informações sobre isso nos documentos analisados." Jamais fale algo do seu conhecimento que não esteja nos documentos.
 
 3. NÃO RESUMA. NÃO AGRUPE fontes. CITE após cada afirmação.
 
