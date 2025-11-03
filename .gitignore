@@ -145,6 +145,7 @@ Desktop.ini
 # FAISS indexes
 *.faiss
 *.pkl
+faiss_index/
 
 # IDE
 .vscode/
@@ -155,3 +156,8 @@ Desktop.ini
 
 # Logs
 *.log
+
+# Project specific
+*.pyc
+data/Equipe Nascentia.pdf
+data_backup/
