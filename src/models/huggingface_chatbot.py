@@ -1,3 +1,10 @@
+"""
+Módulo de implementação do chatbot utilizando modelos do HuggingFace.
+
+Este módulo implementa um chatbot RAG usando modelos open-source do HuggingFace,
+incluindo embeddings multilíngues e modelos de linguagem para geração de texto.
+"""
+
 import os
 import warnings
 from pathlib import Path
@@ -21,7 +28,27 @@ warnings.filterwarnings("ignore", category=UserWarning)
 
 
 class HuggingFaceChatbot(BaseChatbot):
+    """
+    Implementação de chatbot RAG utilizando modelos do HuggingFace.
+    
+    Esta classe utiliza:
+    - Embeddings: intfloat/multilingual-e5-large-instruct
+    - Modelo de linguagem: Qwen/Qwen2.5-1.5B-Instruct
+    - Chunk size: 400 caracteres
+    - Chunk overlap: 50 caracteres
+    
+    Attributes:
+        embeddings (HuggingFaceEmbeddings): Modelo de embeddings do HuggingFace
+        llm (HuggingFacePipeline): Pipeline do modelo de linguagem
+        hf_token (str): Token de autenticação do HuggingFace
+    """
     def __init__(self):
+        """
+        Inicializa o chatbot HuggingFace.
+        
+        Configura automaticamente a autenticação, embeddings e modelo de linguagem.
+        Requer a variável de ambiente HUGGINGFACEHUB_API_TOKEN configurada.
+        """
         super().__init__(ModelType.HUGGINGFACE)
         self.embeddings: Optional[HuggingFaceEmbeddings] = None
         self.llm: Optional[HuggingFacePipeline] = None
@@ -31,12 +58,24 @@ class HuggingFaceChatbot(BaseChatbot):
         self.initialize_llm()
     
     def _authenticate(self):
+        """
+        Autentica no HuggingFace Hub usando o token da API.
+        
+        Raises:
+            ValueError: Se o token não estiver configurado no arquivo .env
+        """
         self.hf_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
         if not self.hf_token:
             raise ValueError("Token do Hugging Face não encontrado no .env!")
         login(token=self.hf_token)
     
     def initialize_embeddings(self):
+        """
+        Inicializa o modelo de embeddings multilíngue do HuggingFace.
+        
+        Utiliza o modelo multilingual-e5-large-instruct que suporta múltiplos idiomas
+        e normaliza os embeddings para melhor performance na busca vetorial.
+        """
         self.embeddings = HuggingFaceEmbeddings(
             model_name=Config.HUGGINGFACE_EMBED_MODEL,
             model_kwargs={'device': 'cpu'},
@@ -44,6 +83,15 @@ class HuggingFaceChatbot(BaseChatbot):
         )
     
     def initialize_llm(self):
+        """
+        Inicializa o modelo de linguagem do HuggingFace.
+        
+        Carrega o modelo Qwen2.5-1.5B-Instruct e configura o pipeline de geração
+        de texto com parâmetros otimizados para respostas determinísticas.
+        
+        Raises:
+            ValueError: Se o token do HuggingFace não estiver configurado
+        """
         if self.hf_token is None:
             raise ValueError("HuggingFace token not set. Call _authenticate() first.")
         
@@ -73,6 +121,18 @@ class HuggingFaceChatbot(BaseChatbot):
         self.llm = HuggingFacePipeline(pipeline=pipe)
     
     def load_or_create_index(self, force_recreate: bool = False):
+        """
+        Carrega um índice FAISS existente ou cria um novo.
+        
+        Se o índice já existir e force_recreate for False, carrega o índice existente.
+        Caso contrário, processa todos os PDFs na pasta data/ e cria um novo índice.
+        
+        Args:
+            force_recreate: Se True, força a recriação do índice mesmo se já existir
+        
+        Raises:
+            ValueError: Se não houver documentos PDF na pasta data/
+        """
         if os.path.exists(self.index_path) and not force_recreate:
             try:
                 self.vectordb = FAISS.load_local(
@@ -100,6 +160,18 @@ class HuggingFaceChatbot(BaseChatbot):
         self.vectordb.save_local(str(self.index_path))
     
     def create_qa_chain(self):
+        """
+        Cria a cadeia de perguntas e respostas usando HuggingFace.
+        
+        Configura o retriever para buscar 3 documentos similares e utiliza
+        memória de conversa para manter o contexto da conversa.
+        
+        Returns:
+            ConversationalRetrievalChain: Cadeia configurada para perguntas e respostas
+        
+        Raises:
+            ValueError: Se o banco vetorial ou LLM não estiverem inicializados
+        """
         if self.vectordb is None:
             raise ValueError("Vector database not initialized. Call load_or_create_index() first.")
         
@@ -144,6 +216,18 @@ class HuggingFaceChatbot(BaseChatbot):
         return self.qa_chain
     
     def add_documents(self, documents: List):
+        """
+        Adiciona novos documentos ao índice FAISS existente.
+        
+        Processa os documentos fornecidos e os adiciona ao índice atual,
+        mantendo os documentos anteriores.
+        
+        Args:
+            documents: Lista de documentos LangChain a serem adicionados
+        
+        Raises:
+            ValueError: Se o banco vetorial não estiver inicializado
+        """
         if self.vectordb is None:
             raise ValueError("Vector database not initialized. Call load_or_create_index() first.")
         

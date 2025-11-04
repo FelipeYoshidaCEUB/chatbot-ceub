@@ -1,7 +1,23 @@
+"""
+Script de gerenciamento de modelos do HuggingFace.
+
+Este script permite listar e excluir modelos do cache do HuggingFace,
+ajudando a liberar espaço em disco quando necessário.
+"""
+
 import os
 import shutil
 
 def get_directory_size(path):
+    """
+    Calcula o tamanho total de um diretório em bytes.
+    
+    Args:
+        path: Caminho do diretório a ser analisado
+    
+    Returns:
+        Tamanho total em bytes (0 se o diretório não existir)
+    """
     total_size = 0
     if not os.path.exists(path):
         return 0
@@ -15,6 +31,15 @@ def get_directory_size(path):
     return total_size
 
 def format_size(size_bytes):
+    """
+    Formata um tamanho em bytes para uma string legível.
+    
+    Args:
+        size_bytes: Tamanho em bytes
+    
+    Returns:
+        String formatada (ex: "1.5 GB")
+    """
     if size_bytes == 0:
         return "0 B"
     size_names = ["B", "KB", "MB", "GB", "TB"]
@@ -25,7 +50,16 @@ def format_size(size_bytes):
     return f"{size_bytes:.2f} {size_names[i]}"
 
 def delete_model(model_name, cache_dir):
-    """Exclui um modelo específico do cache"""
+    """
+    Exclui um modelo específico do cache do HuggingFace.
+    
+    Args:
+        model_name: Nome do modelo a ser excluído
+        cache_dir: Diretório base do cache do HuggingFace
+    
+    Returns:
+        True se o modelo foi excluído com sucesso, False caso contrário
+    """
     model_path = os.path.join(cache_dir, 'hub', model_name)
     
     if not os.path.exists(model_path):
@@ -43,7 +77,15 @@ def delete_model(model_name, cache_dir):
         return False
 
 def list_models_by_size(cache_dir):
-    """Lista modelos ordenados por tamanho"""
+    """
+    Lista todos os modelos no cache ordenados por tamanho (maior primeiro).
+    
+    Args:
+        cache_dir: Diretório base do cache do HuggingFace
+    
+    Returns:
+        Lista de tuplas (nome_do_modelo, tamanho_em_bytes)
+    """
     hub_dir = os.path.join(cache_dir, 'hub')
     if not os.path.exists(hub_dir):
         print("❌ Diretório hub não encontrado!")
@@ -61,6 +103,13 @@ def list_models_by_size(cache_dir):
     return models
 
 def main():
+    """
+    Função principal do script de gerenciamento de modelos.
+    
+    Exibe uma interface interativa para listar e excluir modelos do cache
+    do HuggingFace, permitindo escolher modelos específicos ou excluir
+    todos os modelos grandes ou todos os modelos.
+    """
     cache_dir = os.path.expanduser('~/.cache/huggingface')
     
     print("=== GERENCIADOR DE MODELOS HUGGING FACE ===\n")

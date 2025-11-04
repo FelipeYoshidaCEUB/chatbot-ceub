@@ -1,3 +1,10 @@
+"""
+Módulo de processamento de documentos PDF.
+
+Este módulo fornece utilitários para carregar e processar documentos PDF,
+dividindo-os em chunks apropriados para indexação vetorial.
+"""
+
 from pathlib import Path
 from typing import List
 from langchain_community.document_loaders import PyPDFLoader
@@ -8,12 +15,33 @@ from .config import Config, ModelType
 
 
 class DocumentProcessor:
+    """
+    Classe para processamento de documentos PDF.
+    
+    Fornece métodos estáticos para carregar PDFs de diretórios ou arquivos
+    individuais e dividi-los em chunks com metadados apropriados.
+    """
     @staticmethod
     def load_and_split_documents(
         pdf_dir: Path,
         chunk_size: int,
         chunk_overlap: int
     ) -> List[Document]:
+        """
+        Carrega todos os PDFs de um diretório e os divide em chunks.
+        
+        Args:
+            pdf_dir: Caminho para o diretório contendo os PDFs
+            chunk_size: Tamanho máximo de cada chunk em caracteres
+            chunk_overlap: Sobreposição entre chunks em caracteres
+        
+        Returns:
+            Lista de documentos LangChain com metadados de fonte e página
+        
+        Raises:
+            FileNotFoundError: Se o diretório não existir
+            ValueError: Se não houver arquivos PDF no diretório
+        """
         all_chunks = []
         
         if not pdf_dir.exists():
@@ -43,6 +71,20 @@ class DocumentProcessor:
     
     @staticmethod
     def process_uploaded_file(file_content: bytes, filename: str, chunk_size: int, chunk_overlap: int) -> List[Document]:
+        """
+        Processa um arquivo PDF enviado via upload e o divide em chunks.
+        
+        O arquivo é salvo temporariamente, processado e depois removido.
+        
+        Args:
+            file_content: Conteúdo binário do arquivo PDF
+            filename: Nome do arquivo original
+            chunk_size: Tamanho máximo de cada chunk em caracteres
+            chunk_overlap: Sobreposição entre chunks em caracteres
+        
+        Returns:
+            Lista de documentos LangChain com metadados de fonte e página
+        """
         import tempfile
         import os
         
