@@ -32,8 +32,7 @@ env/
 .idea/
 .vscode/
 
-faiss_index/*.faiss
-faiss_index/*.pkl
+faiss_index/
 
 *.pdf
 !data/*.pdf
