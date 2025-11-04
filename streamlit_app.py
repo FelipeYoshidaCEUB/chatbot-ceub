@@ -1,3 +1,18 @@
+"""
+Interface Streamlit para o Chatbot RAG da Nascentia.
+
+Este módulo fornece uma interface web moderna para interagir com os chatbots,
+permitindo escolher entre diferentes modelos (OpenAI ou HuggingFace), fazer upload
+de documentos PDF e visualizar os chunks indexados.
+
+Funcionalidades:
+- Seletor de modelo (OpenAI ou HuggingFace)
+- Upload e processamento de documentos PDF
+- Chat interativo com histórico de conversa
+- Visualização de chunks indexados
+- Estatísticas do índice FAISS
+"""
+
 import os
 import tempfile
 import warnings
@@ -17,6 +32,12 @@ warnings.filterwarnings("ignore", category=UserWarning)
 
 
 def initialize_session_state():
+    """
+    Inicializa o estado da sessão do Streamlit.
+    
+    Configura as variáveis de estado necessárias para manter o contexto
+    da aplicação durante a sessão do usuário.
+    """
     if "messages" not in st.session_state:
         st.session_state.messages = []
     if "chatbot" not in st.session_state:
@@ -28,6 +49,15 @@ def initialize_session_state():
 
 
 def initialize_chatbot(model_type: ModelType) -> Optional[Any]:
+    """
+    Inicializa um chatbot do tipo especificado.
+    
+    Args:
+        model_type: Tipo do modelo a ser inicializado (OPENAI ou HUGGINGFACE)
+    
+    Returns:
+        Instância do chatbot inicializada ou None em caso de erro
+    """
     try:
         if model_type == ModelType.OPENAI:
             chatbot = OpenAIChatbot()
@@ -48,6 +78,16 @@ def initialize_chatbot(model_type: ModelType) -> Optional[Any]:
 
 
 def process_uploaded_files(uploaded_files: List[Any], chatbot: Any) -> bool:
+    """
+    Processa arquivos PDF enviados via upload e os adiciona ao índice.
+    
+    Args:
+        uploaded_files: Lista de arquivos enviados pelo usuário
+        chatbot: Instância do chatbot ativo
+    
+    Returns:
+        True se os arquivos foram processados com sucesso, False caso contrário
+    """
     if chatbot is None:
         st.error("Chatbot not initialized")
         return False
@@ -86,6 +126,15 @@ def process_uploaded_files(uploaded_files: List[Any], chatbot: Any) -> bool:
 
 
 def get_chunks_dataframe(chatbot: Any) -> pd.DataFrame:
+    """
+    Extrai informações dos chunks do índice FAISS para visualização.
+    
+    Args:
+        chatbot: Instância do chatbot ativo
+    
+    Returns:
+        DataFrame pandas com informações dos chunks (ID, Conteúdo, Fonte, Página, Tamanho)
+    """
     if chatbot is None or chatbot.vectordb is None:
         return pd.DataFrame()
     
