@@ -1,4 +1,4 @@
-# Chatbot Nascentia - Projeto Unificado
+# Chatbot Nascentia 
 
 Chatbot RAG (Retrieval-Augmented Generation) da Nascentia com suporte para múltiplos modelos de linguagem (OpenAI e HuggingFace).
 
