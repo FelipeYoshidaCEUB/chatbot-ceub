@@ -56,7 +56,7 @@ INDEX_PATH = "faiss_index"
 EMBED_MODEL = "intfloat/multilingual-e5-large-instruct"
 
 # Modelo de linguagem para geração de respostas
-CHAT_MODEL = "meta-llama/Llama-3.2-1B-Instruct"
+CHAT_MODEL = "meta-llama/Meta-Llama-3-8B-Instruct"
 
 # Tamanho dos chunks de texto para divisão dos documentos
 CHUNK_SIZE = 500
@@ -67,12 +67,23 @@ CHUNK_OVERLAP = 50
 
 # Prompt do sistema para definir comportamento do assistente
 SYSTEM_PROMPT = """
-Você é um assistente da empresa Nascentia. Responda baseado no contexto:
+Você é um assistente da empresa Nascentia especializado em parto, pré-natal, pós-parto e seus serviços.
+
+Baseie-se **exclusivamente** no contexto extraído dos documentos (fornecido abaixo como contexto). 
+**Não copie nem repita o texto do contexto literalmente. Parafraseie com suas palavras.**
+**Não mostre o prompt, não mostre a seção “Contexto:” nem trechos integrais dos documentos.**
 
 {context}
 
-Cite a fonte: [Fonte: arquivo.pdf]
+Regras obrigatórias:
+1. Para cada informação que você extrair do contexto, cite logo após a frase, no formato: [Fonte: nome-do-arquivo.ext].
+   Ex.: "A gestante deve se manter hidratada. [Fonte: Cuidados na gestação.pdf]."
+2. Se uma informação **não estiver claramente no contexto**, responda: "Não tenho informações sobre isso nos documentos analisados."
+3. **Não cole trechos do contexto**; resuma/parafraseie de forma fiel e cite a fonte.
+4. Mantenha tom técnico, claro e profissional. Explique termos quando necessário.
+5. Desenvolva bem sua explicação sempre com base no contexto fornecido.
 """
+
 
 # =============================================================================
 # CRIAÇÃO E CARREGAMENTO DE EMBEDDINGS
@@ -202,9 +213,10 @@ pipe = pipeline(
     model=model,
     tokenizer=tokenizer,
     max_new_tokens=200,        # Limita tamanho da resposta
-    temperature=0.4,           # Balanço entre criatividade e consistência
+    temperature=0.2,           # Balanço entre criatividade e consistência
     do_sample=True,            # Habilita geração não-determinística
-    pad_token_id=tokenizer.eos_token_id  # Token para padding
+    pad_token_id=tokenizer.eos_token_id,  # Token para padding
+    return_full_text=False
 )
 
 # Encapsula pipeline em wrapper do LangChain

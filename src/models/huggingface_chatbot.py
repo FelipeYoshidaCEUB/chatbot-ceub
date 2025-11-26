@@ -33,26 +33,40 @@ class HuggingFaceChatbot(BaseChatbot):
     
     Esta classe utiliza:
     - Embeddings: intfloat/multilingual-e5-large-instruct
-    - Modelo de linguagem: Qwen/Qwen2.5-1.5B-Instruct
-    - Chunk size: 400 caracteres
-    - Chunk overlap: 50 caracteres
+    - Modelo de linguagem: configurável via parâmetro ou Config.HUGGINGFACE_CHAT_MODEL
+    - Chunk size: definido em Config para ModelType.HUGGINGFACE
+    - Chunk overlap: definido em Config para ModelType.HUGGINGFACE
     
     Attributes:
         embeddings (HuggingFaceEmbeddings): Modelo de embeddings do HuggingFace
         llm (HuggingFacePipeline): Pipeline do modelo de linguagem
         hf_token (str): Token de autenticação do HuggingFace
+        chat_model_name (str): Nome do modelo de linguagem do HuggingFace a ser usado
     """
-    def __init__(self):
+    def __init__(self, model_name: Optional[str] = None, device: str = "cpu"):
         """
         Inicializa o chatbot HuggingFace.
         
         Configura automaticamente a autenticação, embeddings e modelo de linguagem.
         Requer a variável de ambiente HUGGINGFACEHUB_API_TOKEN configurada.
+        
+        Args:
+            model_name: nome do modelo de linguagem no HuggingFace Hub
+                        (ex.: "Qwen/Qwen2.5-1.5B-Instruct").
+                        Se None, usa Config.HUGGINGFACE_CHAT_MODEL.
+            device: dispositivo para rodar embeddings/LLM ("cpu", "cuda", etc.).
+                    Atualmente usado nos embeddings; o modelo de linguagem segue
+                    a configuração padrão do transformers/pipeline.
         """
         super().__init__(ModelType.HUGGINGFACE)
         self.embeddings: Optional[HuggingFaceEmbeddings] = None
         self.llm: Optional[HuggingFacePipeline] = None
         self.hf_token: Optional[str] = None
+
+        # Nome do modelo de linguagem a ser usado
+        self.chat_model_name: str = model_name or Config.HUGGINGFACE_CHAT_MODEL
+        self.device: str = device
+
         self._authenticate()
         self.initialize_embeddings()
         self.initialize_llm()
@@ -78,15 +92,15 @@ class HuggingFaceChatbot(BaseChatbot):
         """
         self.embeddings = HuggingFaceEmbeddings(
             model_name=Config.HUGGINGFACE_EMBED_MODEL,
-            model_kwargs={'device': 'cpu'},
-            encode_kwargs={'normalize_embeddings': True}
+            model_kwargs={"device": self.device},
+            encode_kwargs={"normalize_embeddings": True},
         )
     
     def initialize_llm(self):
         """
         Inicializa o modelo de linguagem do HuggingFace.
         
-        Carrega o modelo Qwen2.5-1.5B-Instruct e configura o pipeline de geração
+        Carrega o modelo definido em self.chat_model_name e configura o pipeline de geração
         de texto com parâmetros otimizados para respostas determinísticas.
         
         Raises:
@@ -96,11 +110,11 @@ class HuggingFaceChatbot(BaseChatbot):
             raise ValueError("HuggingFace token not set. Call _authenticate() first.")
         
         tokenizer = AutoTokenizer.from_pretrained(
-            Config.HUGGINGFACE_CHAT_MODEL,
+            self.chat_model_name,
             token=self.hf_token
         )
         model = AutoModelForCausalLM.from_pretrained(
-            Config.HUGGINGFACE_CHAT_MODEL,
+            self.chat_model_name,
             token=self.hf_token
         )
         
@@ -178,16 +192,18 @@ class HuggingFaceChatbot(BaseChatbot):
         if self.llm is None:
             raise ValueError("LLM not initialized.")
         
-        document_prompt = PromptTemplate.from_template("{page_content}\n\n[Fonte: {source}]")
+        # Cada chunk vem com o conteúdo e a fonte no formato desejado
+        document_prompt = PromptTemplate.from_template(
+            "{page_content}\n\n[Fonte: {source}]"
+        )
         
+        # Prompt geral, usando o SYSTEM_PROMPT com {context} e {question}
         prompt_template = PromptTemplate(
             input_variables=["context", "question"],
             template=(
-                "### Instruções:\n"
-                + Config.SYSTEM_PROMPT
-                + "\n\n### Contexto relevante dos documentos:\n{context}\n"
-                + "\n### Pergunta do usuário:\n{question}\n\n"
-                + "### Resposta detalhada e completa:\n"
+                Config.SYSTEM_PROMPT
+                + "\n\n### Pergunta do usuário:\n{question}\n\n"
+                + "### Resposta detalhada e completa, seguindo todas as regras acima:\n"
             ),
         )
         
@@ -234,4 +250,3 @@ class HuggingFaceChatbot(BaseChatbot):
         new_vectordb = FAISS.from_documents(documents, self.embeddings)
         self.vectordb.merge_from(new_vectordb)
         self.vectordb.save_local(str(self.index_path))
-

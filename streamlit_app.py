@@ -46,14 +46,18 @@ def initialize_session_state():
         st.session_state.model_type = ModelType.OPENAI
     if "index_loaded" not in st.session_state:
         st.session_state.index_loaded = False
+    # Novo: modelo HuggingFace selecionado
+    if "hf_model_name" not in st.session_state:
+        st.session_state.hf_model_name = Config.HUGGINGFACE_CHAT_MODEL
 
 
-def initialize_chatbot(model_type: ModelType) -> Optional[Any]:
+def initialize_chatbot(model_type: ModelType, hf_model_name: Optional[str] = None) -> Optional[Any]:
     """
     Inicializa um chatbot do tipo especificado.
     
     Args:
         model_type: Tipo do modelo a ser inicializado (OPENAI ou HUGGINGFACE)
+        hf_model_name: nome do modelo HuggingFace (só usado se model_type == HUGGINGFACE)
     
     Returns:
         Instância do chatbot inicializada ou None em caso de erro
@@ -62,7 +66,7 @@ def initialize_chatbot(model_type: ModelType) -> Optional[Any]:
         if model_type == ModelType.OPENAI:
             chatbot = OpenAIChatbot()
         elif model_type == ModelType.HUGGINGFACE:
-            chatbot = HuggingFaceChatbot()
+            chatbot = HuggingFaceChatbot(model_name=hf_model_name)
         else:
             st.error(f"Model type {model_type} not supported")
             return None
@@ -175,29 +179,74 @@ def main():
         
         model_options = {
             "OpenAI (GPT-4o-mini)": ModelType.OPENAI,
-            "HuggingFace (Qwen2.5-1.5B)": ModelType.HUGGINGFACE
+            "HuggingFace": ModelType.HUGGINGFACE,
         }
         
         selected_model_name = st.selectbox(
-            "Escolha o modelo:",
+            "Escolha o tipo de modelo:",
             list(model_options.keys()),
             index=0 if st.session_state.model_type == ModelType.OPENAI else 1
         )
         
         selected_model_type = model_options[selected_model_name]
-        
+
+        # Se trocar de tipo de modelo, resetar chatbot e histórico
         if selected_model_type != st.session_state.model_type:
             st.session_state.model_type = selected_model_type
             st.session_state.chatbot = None
             st.session_state.index_loaded = False
             st.session_state.messages = []
             st.rerun()
+
+        # Se o tipo selecionado for HuggingFace, permitir escolher o modelo HF
+        hf_model_name = st.session_state.hf_model_name
+        if st.session_state.model_type == ModelType.HUGGINGFACE:
+            st.markdown("### 🤗 Modelo HuggingFace")
+
+            # Leves: bons pra testar rápido / máquina mais fraca
+            # Médios: mais capacidade, ainda testáveis
+            # Pesados: podem exigir mais RAM/VRAM, cuidado na VM
+            hf_models = {
+                # LEVES
+                "Leve – Qwen 2.5 (0.5B) Instruct": "Qwen/Qwen2.5-0.5B-Instruct",
+                "Leve – Phi-3 Mini 4K Instruct": "microsoft/Phi-3-mini-4k-instruct",
+                "Leve – Gemma 2 (2B) IT": "google/gemma-2-2b-it",
+
+                # MÉDIOS
+                "Médio – Qwen 2.5 (1.5B) Instruct": "Qwen/Qwen2.5-1.5B-Instruct",
+                "Médio – Qwen 2.5 (3B) Instruct": "Qwen/Qwen2.5-3B-Instruct",
+
+                # PESADOS
+                "Pesado – Mistral 7B Instruct v0.2": "mistralai/Mistral-7B-Instruct-v0.2",
+                "Pesado – Qwen 2.5 (7B) Instruct": "Qwen/Qwen2.5-7B-Instruct",
+            }
+
+            # Garantir que o valor atual esteja na lista, senão cair na primeira opção
+            if hf_model_name not in hf_models.values():
+                hf_model_name = list(hf_models.values())[0]
+
+            current_index = list(hf_models.values()).index(hf_model_name)
+
+            selected_hf_label = st.selectbox(
+                "Escolha o modelo HuggingFace:",
+                list(hf_models.keys()),
+                index=current_index
+            )
+
+            st.session_state.hf_model_name = hf_models[selected_hf_label]
+            hf_model_name = st.session_state.hf_model_name
+
         
         st.markdown("---")
         
         if st.button("🔄 Carregar/Recarregar Modelo", type="primary"):
             with st.spinner("Inicializando chatbot..."):
-                chatbot = initialize_chatbot(st.session_state.model_type)
+                chatbot = initialize_chatbot(
+                    st.session_state.model_type,
+                    hf_model_name=st.session_state.hf_model_name
+                    if st.session_state.model_type == ModelType.HUGGINGFACE
+                    else None
+                )
                 if chatbot:
                     st.session_state.chatbot = chatbot
                     st.success("✅ Modelo carregado com sucesso!")
@@ -235,10 +284,11 @@ def main():
         
         st.markdown("### 💡 Como usar:")
         if st.session_state.chatbot is None:
-            st.markdown("1. Escolha o modelo")
-            st.markdown("2. Clique em 'Carregar/Recarregar Modelo'")
-            st.markdown("3. Faça upload de PDFs (opcional)")
-            st.markdown("4. Use o chat para perguntas")
+            st.markdown("1. Escolha o tipo de modelo (OpenAI ou HuggingFace)")
+            st.markdown("2. (Opcional) Se HuggingFace, selecione o modelo específico")
+            st.markdown("3. Clique em 'Carregar/Recarregar Modelo'")
+            st.markdown("4. Faça upload de PDFs (opcional)")
+            st.markdown("5. Use o chat para perguntas")
         else:
             st.markdown("✅ **Chat ativo!**")
             st.markdown("1. Use o chat para perguntas")
@@ -265,6 +315,7 @@ def main():
                 with st.chat_message("assistant"):
                     with st.spinner("Pensando..."):
                         try:
+                            # Montar histórico simples (opcional; a cadeia já tem memória também)
                             chat_history = ""
                             for msg in st.session_state.messages[-6:]:
                                 if msg["role"] == "user":
@@ -273,7 +324,10 @@ def main():
                                     chat_history += f"Assistente: {msg['content']}\n"
                             
                             if chat_history:
-                                contextual_prompt = f"Histórico da conversa:\n{chat_history}\n\nPergunta atual: {prompt}"
+                                contextual_prompt = (
+                                    f"Histórico da conversa:\n{chat_history}\n\n"
+                                    f"Pergunta atual: {prompt}"
+                                )
                             else:
                                 contextual_prompt = prompt
                             
@@ -347,7 +401,7 @@ def main():
                 
                 st.dataframe(
                     display_df,
-                    width='stretch',
+                    width="stretch",
                     height=400
                 )
                 
@@ -364,4 +418,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
