@@ -14,8 +14,8 @@ load_dotenv()
 warnings.filterwarnings("ignore", category=UserWarning)
 
 # Caminhos das logos
-COMPANY_LOGO_PATH = "logo Nascentia 2.png"
-CHATBOT_AVATAR_PATH = "Logo chatbot.png"
+COMPANY_LOGO_PATH = "Docs\images\Logo Nascentia 2.png"
+CHATBOT_AVATAR_PATH = "Docs\images\Logo chatbot.png"
 
 
 def _image_to_base64(path: str) -> Optional[str]:
