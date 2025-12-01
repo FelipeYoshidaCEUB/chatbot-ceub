@@ -1,4 +1,4 @@
-"""
+"""  VERSÃO DEV - para testar modelos.
 Interface Streamlit para o Chatbot RAG da Nascentia.
 
 Este módulo fornece uma interface web moderna para interagir com os chatbots,

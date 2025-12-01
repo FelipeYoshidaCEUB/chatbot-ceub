@@ -47,7 +47,7 @@ class Config:
         HUGGINGFACE_CHUNK_OVERLAP: Sobreposição dos chunks para HuggingFace
         SYSTEM_PROMPT: Prompt do sistema usado pelos chatbots
     """
-    PDF_DIR = Path("data")
+    PDF_DIR = Path("data") # Coloque aqui o caminho da pasta onde os PDFs estão armazenados
     
     OPENAI_INDEX_PATH = Path("faiss_index/openai")
     HUGGINGFACE_INDEX_PATH = Path("faiss_index/huggingface")
@@ -63,7 +63,7 @@ class Config:
     HUGGINGFACE_CHUNK_OVERLAP = 50
     
     SYSTEM_PROMPT = """
-Você é um assistente da empresa Nascentia especializado em parto, pré-natal, pós-parto e seus serviços.
+Você é a NascentIA, uma assistente virtual da empresa Nascentia especializado em parto, pré-natal, pós-parto e seus serviços. Seu objetivo é ajudar e esclarecer dúvidas aos clientes da Nascentia.
 
 Baseie-se **exclusivamente** no contexto extraído dos documentos (fornecido abaixo como contexto). 
 **Não copie nem repita o texto do contexto literalmente. Parafraseie com suas palavras.**

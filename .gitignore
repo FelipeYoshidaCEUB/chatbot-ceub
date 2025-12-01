@@ -36,3 +36,7 @@ faiss_index/
 
 *.pdf
 !data/*.pdf
+
+scr/
+
+chatbot_hugging/scr
