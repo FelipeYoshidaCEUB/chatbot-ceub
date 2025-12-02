@@ -1,16 +1,42 @@
 # Chatbot Nascentia 
 
-Chatbot RAG (Retrieval-Augmented Generation) da Nascentia com suporte para múltiplos modelos de linguagem (OpenAI e HuggingFace).
+Chatbot RAG (Retrieval-Augmented Generation) da Nascentia especializado em parto, pré-natal e pós-parto.
+
+## 📦 Versões Disponíveis
+
+O projeto possui duas versões:
+
+### 🎯 Versão Final (`chatbot.py`)
+- **Modelo**: OpenAI GPT-4o-mini (fixo, único modelo disponível)
+- **Interface**: Interface web moderna e personalizada com tema da Nascentia
+- **Uso**: Versão de produção, recomendada para uso final
+- **Características**: 
+  - Interface otimizada com design customizado da marca Nascentia
+  - Experiência de usuário aprimorada
+  - Chat interativo com histórico de conversa
+  - Processamento automático de documentos PDF da pasta `data/`
+  - Índices FAISS persistentes
+
+### 🧪 Versão de Desenvolvimento (`chatbot (dev).py`)
+- **Modelos**: Suporte para OpenAI e múltiplos modelos HuggingFace
+- **Interface**: Interface completa com funcionalidades de teste e desenvolvimento
+- **Uso**: Versão para testes, comparação de modelos e desenvolvimento
+- **Características**: 
+  - Seletor de modelos (OpenAI ou HuggingFace)
+  - Múltiplos modelos HuggingFace disponíveis (leves, médios e pesados)
+  - Visualização de chunks indexados
+  - Upload de documentos PDF via interface
+  - Estatísticas do índice FAISS
+  - Análise e exportação de dados dos chunks
 
 ## 🚀 Características
 
-- **Múltiplos Modelos**: Suporte para OpenAI GPT-4o-mini e HuggingFace Qwen2.5-1.5B
 - **Interface Streamlit**: Interface web moderna e intuitiva
 - **Processamento de PDFs**: Carrega e processa múltiplos documentos PDF automaticamente
 - **Memória de Conversa**: Mantém contexto da conversa durante a sessão
 - **Citações Automáticas**: Inclui referências às fontes dos documentos
 - **Índices FAISS Persistentes**: Salva e carrega índices separados para cada modelo
-- **Seletor de Modelo**: Escolha entre diferentes modelos na interface
+- **Design Personalizado**: Interface customizada com tema da marca Nascentia (versão final)
 
 ## 📋 Pré-requisitos
 
@@ -44,23 +70,52 @@ HUGGINGFACEHUB_API_TOKEN=hf_seu_token_huggingface_aqui
 
 ### 4. Executar a Aplicação
 
+**Versão Final (Produção):**
 ```bash
-streamlit run streamlit_app.py
+streamlit run chatbot.py
+```
+
+**Versão de Desenvolvimento:**
+```bash
+streamlit run "chatbot (dev).py"
 ```
 
 A aplicação estará disponível em `http://localhost:8501`
 
 ## 🤖 Modelos Disponíveis
 
-### OpenAI (GPT-4o-mini)
+### Versão Final (`chatbot.py`)
+- **Modelo**: OpenAI GPT-4o-mini (único modelo disponível)
+  - **Embeddings**: `text-embedding-3-small`
+  - **Chat**: `gpt-4o-mini`
+  - **Chunk Size**: 1500 caracteres
+  - **Chunk Overlap**: 200 caracteres
+
+### Versão de Desenvolvimento (`chatbot (dev).py`)
+
+#### OpenAI
 - **Embeddings**: `text-embedding-3-small`
 - **Chat**: `gpt-4o-mini`
 - **Chunk Size**: 1500 caracteres
 - **Chunk Overlap**: 200 caracteres
 
-### HuggingFace (Qwen2.5-1.5B)
+#### HuggingFace (Múltiplos modelos disponíveis)
+
+**Modelos Leves:**
+- `Qwen/Qwen2.5-0.5B-Instruct`
+- `microsoft/Phi-3-mini-4k-instruct`
+- `google/gemma-2-2b-it`
+
+**Modelos Médios:**
+- `Qwen/Qwen2.5-1.5B-Instruct` (padrão)
+- `Qwen/Qwen2.5-3B-Instruct`
+
+**Modelos Pesados:**
+- `mistralai/Mistral-7B-Instruct-v0.2`
+- `Qwen/Qwen2.5-7B-Instruct`
+
+**Configuração padrão HuggingFace:**
 - **Embeddings**: `intfloat/multilingual-e5-large-instruct`
-- **Chat**: `Qwen/Qwen2.5-1.5B-Instruct`
 - **Chunk Size**: 400 caracteres
 - **Chunk Overlap**: 50 caracteres
 
@@ -80,7 +135,8 @@ chatbot-ceub/
 ├── faiss_index/                       # Índices FAISS persistentes
 │   ├── openai/                       # Índice para modelo OpenAI
 │   └── huggingface/                   # Índice para modelo HuggingFace
-├── streamlit_app.py                   # Interface Streamlit
+├── chatbot.py                         # Versão final (produção) - OpenAI apenas
+├── chatbot (dev).py                   # Versão de desenvolvimento - OpenAI + HuggingFace
 ├── requirements.txt                   # Dependências
 ├── .env                               # Variáveis de ambiente (criar)
 └── README.md                          # Este arquivo
@@ -88,12 +144,21 @@ chatbot-ceub/
 
 ## 💻 Uso
 
-1. **Iniciar a aplicação**: Execute `streamlit run streamlit_app.py`
+### Versão Final (`chatbot.py`)
+
+1. **Iniciar a aplicação**: Execute `streamlit run chatbot.py`
+2. **Conversar**: O modelo OpenAI já está carregado automaticamente
+3. **Documentos**: Coloque os PDFs na pasta `data/` antes de iniciar (serão processados automaticamente)
+
+### Versão de Desenvolvimento (`chatbot (dev).py`)
+
+1. **Iniciar a aplicação**: Execute `streamlit run "chatbot (dev).py"`
 2. **Selecionar modelo**: Na barra lateral, escolha entre OpenAI ou HuggingFace
-3. **Carregar modelo**: Clique em "Carregar/Recarregar Modelo"
-4. **Fazer upload de documentos** (opcional): Se ainda não houver índice, faça upload de PDFs
-5. **Conversar**: Use a aba "Chat" para fazer perguntas
-6. **Visualizar chunks**: Use a aba "Visualização" para ver os chunks indexados
+3. **Selecionar modelo HuggingFace** (se aplicável): Escolha entre os modelos disponíveis (leves, médios ou pesados)
+4. **Carregar modelo**: Clique em "Carregar/Recarregar Modelo"
+5. **Fazer upload de documentos** (opcional): Se ainda não houver índice, faça upload de PDFs
+6. **Conversar**: Use a aba "Chat" para fazer perguntas
+7. **Visualizar chunks**: Use a aba "Visualização" para ver os chunks indexados
 
 ## 🔄 Migração de Índices Existentes
 
@@ -106,7 +171,8 @@ Se você já tinha índices FAISS dos projetos anteriores:
 
 - Cada modelo mantém seu próprio índice FAISS separado
 - Os índices são criados automaticamente na primeira execução
-- Documentos podem ser adicionados via upload na interface
+- **Versão Final**: Documentos devem ser colocados na pasta `data/` antes de iniciar
+- **Versão de Desenvolvimento**: Documentos podem ser adicionados via upload na interface
 - O histórico de conversa é mantido durante a sessão
 
 ## 👥 Integrantes
