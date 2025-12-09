@@ -48,13 +48,27 @@ O projeto possui duas versões:
 
 ## 🔧 Configuração
 
-### 1. Instalar Dependências
+### 1. Criar e Ativar Ambiente Virtual
+
+**Windows:**
+```bash
+python -m venv venv
+venv\Scripts\activate
+```
+
+**Linux/Mac:**
+```bash
+python -m venv venv
+source venv/bin/activate
+```
+
+### 2. Instalar Dependências
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Configurar Variáveis de Ambiente
+### 3. Configurar Variáveis de Ambiente
 
 Crie um arquivo `.env` na raiz do projeto com:
 
@@ -63,12 +77,12 @@ OPENAI_API_KEY=sk-seu_token_openai_aqui
 HUGGINGFACEHUB_API_TOKEN=hf_seu_token_huggingface_aqui
 ```
 
-### 3. Preparar Documentos
+### 4. Preparar Documentos
 
 1. Coloque seus arquivos PDF na pasta `data/`
 2. O chatbot processará automaticamente todos os PDFs encontrados ao carregar o modelo
 
-### 4. Executar a Aplicação
+### 5. Executar a Aplicação
 
 **Versão Final (Produção):**
 ```bash
